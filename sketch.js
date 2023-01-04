@@ -11,7 +11,6 @@ function preload(){ //função que vai carregar os arquivos (jpg, png, mp3...) p
 
 function setup(){ //função que vai configurar o que fazemos nos sprites 28/12
   createCanvas(600,200);
-  
   //crie um sprite de trex
   trex = createSprite(50, 180, 20, 50);
   //adicionar a animação do trex_running pro nosso sprite
@@ -28,18 +27,22 @@ function setup(){ //função que vai configurar o que fazemos nos sprites 28/12
   ground.x = ground.width /2;
   //a velocidade que o chão se move no eixo x 28/12
   ground.velocityX = -4;
+  //criar o chão invisivel 02/01
+  invisibleGround = createSprite(200,190,400,20);
+  //sprite.visible escolhe a visibilidade. True = aparece. False = desaparece 02/01
+  invisibleGround.visible = false;
 }
 
 function draw(){ //função que vai desenhar na nossa tela 28/12
   background("white");
-  //pular quando a tecla espaço for pressionada 28/12
-  if(keyDown("space")) {
+  //pular quando a tecla espaço for pressionada 28/12 e somente quando estiver entre 100 e 200 02/01
+  if(keyDown("space") && trex.y >= 100) {
     trex.velocityY = -10;
   }
   //ter uma gravidade puxando ele ao chão 28/12
   trex.velocityY = trex.velocityY + 0.8
- //impedir que o trex caia 28/12
-  trex.collide(ground);
+ //impedir que o trex caia 28/12 e colida no chão invisivel 02/01
+  trex.collide(invisibleGround);
   drawSprites();
 
 }
