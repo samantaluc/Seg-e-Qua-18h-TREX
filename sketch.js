@@ -2,6 +2,15 @@ var ground, groundImage; //variavel para o chão 28/12
 var invisibleGround; //variavel para o chão invisivel 02/01
 var trex ,trex_running; //variaveis para o trex 28/12
 var cloud, cloudImage; //variavel para a nuvem 04/01
+var obstacle1, obstacle2, obstacle3, obstacle4, obstacle5, obstacle6; 
+//variavel para carregar as imagens dos obstaculos 09/01
+var score; //variavel para a pontuação 11/01
+
+var PLAY = 1; //variavel do jogo no estado de Jogar com valor para troca (switch) 11/01
+
+var END = 0; //variavel do jogo no estado de Final com valor para troca (switch) 11/01
+
+var gamestate = PLAY; //variavel de Estado de Jogo, sendo a inicial de Jogar 11/01
 
 function preload(){ //função que vai carregar os arquivos (jpg, png, mp3...) pro nosso jogo 28/12
   //carrega a animação para o trex correndo com os arquivos
@@ -10,6 +19,13 @@ function preload(){ //função que vai carregar os arquivos (jpg, png, mp3...) p
   groundImage = loadImage("ground2.png");
   //carrega a imagem da nuvem 04/01
   cloudImage = loadImage("cloud.png");
+   //imagens para os obstáculos 09/01
+  obstacle1 = loadImage("obstacle1.png");
+  obstacle2 = loadImage("obstacle2.png");
+  obstacle3 = loadImage("obstacle3.png");
+  obstacle4 = loadImage("obstacle4.png");
+  obstacle5 = loadImage("obstacle5.png");
+  obstacle6 = loadImage("obstacle6.png");
 }
 
 function setup(){ //função que vai configurar o que fazemos nos sprites 28/12
@@ -34,6 +50,9 @@ function setup(){ //função que vai configurar o que fazemos nos sprites 28/12
   invisibleGround = createSprite(200,190,400,20);
   //sprite.visible escolhe a visibilidade. True = aparece. False = desaparece 02/01
   invisibleGround.visible = false;
+
+  //pontuação inicia em 0 11/01
+  score = 0;
 }
  
 function draw(){ //função que vai desenhar na nossa tela 28/12
@@ -48,6 +67,8 @@ function draw(){ //função que vai desenhar na nossa tela 28/12
   trex.collide(invisibleGround);
   //chama a função de gerar nuvens 04/01
   spawnClouds(); 
+  //chama a função de gerar obstáculos 09/01
+  spawnObstacles();
   drawSprites();
 
 }
@@ -64,5 +85,35 @@ function spawnClouds(){
       //random vai gerar em intervalos aleatorios (a,b) 
       //a = intervalo inicial
       //b = intervalo final
+      //adiciona o tempo de vida das nuvens 09/01
+      cloud.lifetime = 300;
   }
-}
+
+} 
+
+//função de gerar obstáculos 09/01
+function spawnObstacles(){
+  if (frameCount % 60 === 0){
+    var obstacle = createSprite(400,165,10,40);
+     //gerar obstáculos aleatórios
+     var rand = Math.round(random(1,6));
+     switch(rand) {
+       case 1: obstacle.addImage(obstacle1);
+               break;//reinicia a escolha
+       case 2: obstacle.addImage(obstacle2);
+               break;//reinicia a escolha
+       case 3: obstacle.addImage(obstacle3);
+               break;//reinicia a escolha
+       case 4: obstacle.addImage(obstacle4);
+               break;//reinicia a escolha
+       case 5: obstacle.addImage(obstacle5);
+               break;//reinicia a escolha
+       case 6: obstacle.addImage(obstacle6);
+               break;//reinicia a escolha
+       default: break;
+     }
+     //atribua dimensão e tempo de vida aos obstáculos              
+     obstacle.scale = 0.5;
+     obstacle.lifetime = 300;
+  }
+ }
