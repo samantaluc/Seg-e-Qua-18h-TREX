@@ -5,6 +5,13 @@ var cloud, cloudImage; //variavel para a nuvem 04/01
 var obstacle1, obstacle2, obstacle3, obstacle4, obstacle5, obstacle6; 
 //variavel para carregar as imagens dos obstaculos 09/01
 
+var score; //variavel para a pontuação 11/01
+
+var PLAY = 1; //variavel do jogo no estado de Jogar com valor para troca (switch) 11/01
+
+var END = 0; //variavel do jogo no estado de Final com valor para troca (switch) 11/01
+
+var gamestate = PLAY; //variavel de Estado de Jogo, sendo a inicial de Jogar 11/01
 
 function preload(){ //função que vai carregar os arquivos (jpg, png, mp3...) pro nosso jogo 28/12
   //carrega a animação para o trex correndo com os arquivos
@@ -45,23 +52,40 @@ function setup(){ //função que vai configurar o que fazemos nos sprites 28/12
   //sprite.visible escolhe a visibilidade. True = aparece. False = desaparece 02/01
   invisibleGround.visible = false;
 
-
+  //pontuação inicia em 0 11/01
+  score = 0;
 }
  
 function draw(){ //função que vai desenhar na nossa tela 28/12
   background("white");
+  //adiciona o texto da pontuação 11/01
+  text("Pontuação: " + score, 500,50);
+  
+  //adição dos estados de jogo 11/01
+  if (gamestate === PLAY){
+  //calcula a pontuação usando o total de quadros gerados 11/01
+    score = score+ Math.round(frameCount/60);
   //pular quando a tecla espaço for pressionada 28/12 e somente quando estiver entre 100 e 200 02/01
-  if(keyDown("space") && trex.y >= 100) {
-    trex.velocityY = -10;
-  }
+    if(keyDown("space") && trex.y >= 100) {
+     trex.velocityY = -10;
+    }
   //ter uma gravidade puxando ele ao chão 28/12
-  trex.velocityY = trex.velocityY + 0.8
+    trex.velocityY = trex.velocityY + 0.8
+  //chama a função de gerar nuvens 04/01
+    spawnClouds(); 
+  //chama a função de gerar obstáculos 09/01
+   spawnObstacles();
+  //condição para trocar para o modo do estado de Jogo FIM/END 11/01
+   if(trex.isTouching(obstacle)){
+    gamestate = END;
+   }
+
+  } else (gamestate === END){
+
+  }
+  
  //impedir que o trex caia 28/12 e colida no chão invisivel 02/01
   trex.collide(invisibleGround);
-  //chama a função de gerar nuvens 04/01
-  spawnClouds(); 
-  //chama a função de gerar obstáculos 09/01
-  spawnObstacles();
   drawSprites();
 
 }
