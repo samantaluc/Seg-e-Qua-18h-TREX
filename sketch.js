@@ -4,14 +4,15 @@ var trex ,trex_running; //variaveis para o trex 28/12
 var cloud, cloudImage; //variavel para a nuvem 04/01
 var obstacle1, obstacle2, obstacle3, obstacle4, obstacle5, obstacle6; 
 //variavel para carregar as imagens dos obstaculos 09/01
-
 var score; //variavel para a pontuação 11/01
-
 var PLAY = 1; //variavel do jogo no estado de Jogar com valor para troca (switch) 11/01
-
 var END = 0; //variavel do jogo no estado de Final com valor para troca (switch) 11/01
-
 var gamestate = PLAY; //variavel de Estado de Jogo, sendo a inicial de Jogar 11/01
+
+var clouds; //variavel para grupo de nuvens 16/01
+var obstacles; //variavel para o grupo de obstáculos 16/01
+
+var gameOver, gameOverImage; //variavel para o fim de jogo 16/01
 
 function preload(){ //função que vai carregar os arquivos (jpg, png, mp3...) pro nosso jogo 28/12
   //carrega a animação para o trex correndo com os arquivos
@@ -27,6 +28,8 @@ function preload(){ //função que vai carregar os arquivos (jpg, png, mp3...) p
   obstacle4 = loadImage("obstacle4.png");
   obstacle5 = loadImage("obstacle5.png");
   obstacle6 = loadImage("obstacle6.png");
+  //imagem para o fim de jogo
+  gameOverImage = loadImage("gameOver.png");
 }
 
 function setup(){ //função que vai configurar o que fazemos nos sprites 28/12
@@ -51,16 +54,21 @@ function setup(){ //função que vai configurar o que fazemos nos sprites 28/12
   invisibleGround = createSprite(200,190,400,20);
   //sprite.visible escolhe a visibilidade. True = aparece. False = desaparece 02/01
   invisibleGround.visible = false;
-
   //pontuação inicia em 0 11/01
   score = 0;
+  //define os grupos para os objetos 16/01
+  clouds = new Group();
+  obstacles = new Group();
+  //cria o sprite de Fim de Jogo 16/01
+  gameOver = createSprite(300,100);
+  gameOver.addImage(gameOverImage);
+  gameOver.scale = 0.5;
 }
  
 function draw(){ //função que vai desenhar na nossa tela 28/12
   background("white");
   //adiciona o texto da pontuação 11/01
   text("Pontuação: " + score, 500,50);
-  
   //adição dos estados de jogo 11/01
   if (gamestate === PLAY){
   //calcula a pontuação usando o total de quadros gerados 11/01
@@ -75,13 +83,19 @@ function draw(){ //função que vai desenhar na nossa tela 28/12
     spawnClouds(); 
   //chama a função de gerar obstáculos 09/01
    spawnObstacles();
+  //define a visibilidade do sprite 16/01
+   gameOver.visible = false;
   //condição para trocar para o modo do estado de Jogo FIM/END 11/01
-   if(trex.isTouching(obstacle)){
+   if(obstacles.isTouching(trex)){
     gamestate = END;
    }
 
   } else (gamestate === END){
-
+    //define a visibilidade do sprite 16/01
+   gameOver.visible = true;
+    //define a velocidade no eixo X dos grupos em zero 16/01
+    obstacles.setVelocityXEach(0);
+    clouds.setVelocityXEach(0);
   }
   
  //impedir que o trex caia 28/12 e colida no chão invisivel 02/01
@@ -104,8 +118,9 @@ function spawnClouds(){
       //b = intervalo final
       //adiciona o tempo de vida das nuvens 09/01
       cloud.lifetime = 300;
+      //define o grupo na função de gerar 16/01
+      clouds.add(cloud);
   }
-
 } 
 
 //função de gerar obstáculos 09/01
@@ -129,6 +144,8 @@ function spawnObstacles(){
                break;//reinicia a escolha
        default: break;
      }
+     //define o grupo na função de gerar 16/01
+     obstacles.add(obstacle);
      //atribua dimensão e tempo de vida aos obstáculos              
      obstacle.scale = 0.5;
      obstacle.lifetime = 300;
