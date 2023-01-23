@@ -101,7 +101,7 @@ function draw(){ //função que vai desenhar na nossa tela 28/12
     gamestate = END;
    }
 
-  } else (gamestate === END){
+  } else if (gamestate === END){
   //troca a animação 18/10
     trex.changeAnimation("collide", trex_collided);
   //define a visibilidade do sprite 16/01
