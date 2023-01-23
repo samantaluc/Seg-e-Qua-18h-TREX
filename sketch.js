@@ -14,9 +14,13 @@ var obstacles; //variavel para o grupo de obstáculos 16/01
 
 var gameOver, gameOverImage; //variavel para o fim de jogo 16/01
 
+var trex_collided; //variavel para o trex assustado 18/01
+
 function preload(){ //função que vai carregar os arquivos (jpg, png, mp3...) pro nosso jogo 28/12
   //carrega a animação para o trex correndo com os arquivos
   trex_running = loadAnimation("trex1.png", "trex3.png", "trex4.png");
+  //carrega a animação do trex assustado 18/01
+  trex_collided = loadAnimation("trex_collided.png","trex_collided.png");
   //carrega a imagem do chão
   groundImage = loadImage("ground2.png");
   //carrega a imagem da nuvem 04/01
@@ -38,6 +42,8 @@ function setup(){ //função que vai configurar o que fazemos nos sprites 28/12
   trex = createSprite(50, 180, 20, 50);
   //adicionar a animação do trex_running pro nosso sprite
   trex.addAnimation("running",trex_running);
+  //adicionar a animação do trex_collided 18/10
+  trex.addAnimation("collide", trex_collided);
   //mudar a escala da imagem
   trex.scale = 0.5;
   //definir a posição inicial no eixo horizontal 28/12
@@ -63,6 +69,11 @@ function setup(){ //função que vai configurar o que fazemos nos sprites 28/12
   gameOver = createSprite(300,100);
   gameOver.addImage(gameOverImage);
   gameOver.scale = 0.5;
+
+  //define o tamanho e o tipo do colisor do trex 18/01
+  trex.setCollider("circle", 0, 0, 40);
+  //define se o colisor irá ser visivel. True = Sim, False = Não 18/01
+  trex.debug = false;
 }
  
 function draw(){ //função que vai desenhar na nossa tela 28/12
@@ -91,9 +102,14 @@ function draw(){ //função que vai desenhar na nossa tela 28/12
    }
 
   } else (gamestate === END){
-    //define a visibilidade do sprite 16/01
-   gameOver.visible = true;
-    //define a velocidade no eixo X dos grupos em zero 16/01
+  //troca a animação 18/10
+    trex.changeAnimation("collide", trex_collided);
+  //define a visibilidade do sprite 16/01
+    gameOver.visible = true;
+  //define a vida dos sprites para não serem apagados 18/10
+    obstacles.setLifetimeEach(-1);
+    clouds.setLifetimeEach(-1);
+  //define a velocidade no eixo X dos grupos em zero 16/01
     obstacles.setVelocityXEach(0);
     clouds.setVelocityXEach(0);
   }
