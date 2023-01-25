@@ -16,6 +16,10 @@ var gameOver, gameOverImage; //variavel para o fim de jogo 16/01
 
 var trex_collided; //variavel para o trex assustado 18/01
 
+var restart, restartImg; //variavel para reiniciar 23/01
+
+var jumpSound , checkPointSound, dieSound; //variaveis para os Sons do jogo 23/01
+
 function preload(){ //função que vai carregar os arquivos (jpg, png, mp3...) pro nosso jogo 28/12
   //carrega a animação para o trex correndo com os arquivos
   trex_running = loadAnimation("trex1.png", "trex3.png", "trex4.png");
@@ -32,8 +36,14 @@ function preload(){ //função que vai carregar os arquivos (jpg, png, mp3...) p
   obstacle4 = loadImage("obstacle4.png");
   obstacle5 = loadImage("obstacle5.png");
   obstacle6 = loadImage("obstacle6.png");
-  //imagem para o fim de jogo
+  //imagem para o fim de jogo 16/01
   gameOverImage = loadImage("gameOver.png");
+  //imagem para reiniciar o jogo 23/01
+  restartImg = loadImage("restart.png");
+  // carregar som 23/01
+  jumpSound = loadSound("jump.mp3");
+  dieSound = loadSound("die.mp3");
+  checkPointSound = loadSound("checkpoint.mp3");
 }
 
 function setup(){ //função que vai configurar o que fazemos nos sprites 28/12
@@ -69,11 +79,16 @@ function setup(){ //função que vai configurar o que fazemos nos sprites 28/12
   gameOver = createSprite(300,100);
   gameOver.addImage(gameOverImage);
   gameOver.scale = 0.5;
-
+ 
   //define o tamanho e o tipo do colisor do trex 18/01
   trex.setCollider("circle", 0, 0, 40);
   //define se o colisor irá ser visivel. True = Sim, False = Não 18/01
   trex.debug = false;
+
+  //cria o sprite de Reiniciar 23/01
+  restart = createSprite(300,140);
+  restart.addImage(restartImg);
+  restart.scale = 0.5;
 }
  
 function draw(){ //função que vai desenhar na nossa tela 28/12
@@ -87,6 +102,7 @@ function draw(){ //função que vai desenhar na nossa tela 28/12
   //pular quando a tecla espaço for pressionada 28/12 e somente quando estiver entre 100 e 200 02/01
     if(keyDown("space") && trex.y >= 100) {
      trex.velocityY = -10;
+     jumpSound.play(); // adiciona o som quando pula 23/01
     }
   //ter uma gravidade puxando ele ao chão 28/12
     trex.velocityY = trex.velocityY + 0.8
@@ -96,16 +112,22 @@ function draw(){ //função que vai desenhar na nossa tela 28/12
    spawnObstacles();
   //define a visibilidade do sprite 16/01
    gameOver.visible = false;
+   restart.visible = false; // 23/01
   //condição para trocar para o modo do estado de Jogo FIM/END 11/01
    if(obstacles.isTouching(trex)){
     gamestate = END;
+    dieSound.play(); // toca o som quando encosta no obstaculo 23/01
    }
-
+  //se a pontuação for maior que 0 e for divisivel por 100 (100, 200, 300...) 23/01
+    if(score>0 && score%100 === 0){
+      checkPointSound.play(); //toca o som a cada 100 pts
+    }
   } else if (gamestate === END){
   //troca a animação 18/10
     trex.changeAnimation("collide", trex_collided);
   //define a visibilidade do sprite 16/01
     gameOver.visible = true;
+    restart.visible = true; // 23/01
   //define a vida dos sprites para não serem apagados 18/10
     obstacles.setLifetimeEach(-1);
     clouds.setLifetimeEach(-1);
@@ -143,6 +165,8 @@ function spawnClouds(){
 function spawnObstacles(){
   if (frameCount % 60 === 0){
     var obstacle = createSprite(400,165,10,40);
+    //movimenta os obstaculos no eixo x de forma mais rapida de acordo com a pontuação 23/01
+    obstacle.velocityX = -(6 + score/100);
      //gerar obstáculos aleatórios
      var rand = Math.round(random(1,6));
      switch(rand) {
