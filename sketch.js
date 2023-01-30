@@ -98,7 +98,7 @@ function draw(){ //função que vai desenhar na nossa tela 28/12
   //adição dos estados de jogo 11/01
   if (gamestate === PLAY){
   //calcula a pontuação usando o total de quadros gerados 11/01
-    score = score+ Math.round(frameCount/60);
+    score = score+ Math.round(getFrameRate()/60); //modificado de frameCount para getFrameRate 25/01
   //pular quando a tecla espaço for pressionada 28/12 e somente quando estiver entre 100 e 200 02/01
     if(keyDown("space") && trex.y >= 100) {
      trex.velocityY = -10;
@@ -134,6 +134,10 @@ function draw(){ //função que vai desenhar na nossa tela 28/12
   //define a velocidade no eixo X dos grupos em zero 16/01
     obstacles.setVelocityXEach(0);
     clouds.setVelocityXEach(0);
+  // reinicia o jogo 25/01
+    if(mousePressedOver(restart)){
+      reset();
+    }
   }
   
  //impedir que o trex caia 28/12 e colida no chão invisivel 02/01
@@ -191,3 +195,17 @@ function spawnObstacles(){
      obstacle.lifetime = 300;
   }
  }
+
+//função de reiniciar o jogo 25/01
+function reset(){
+  gamestate = PLAY;
+  gameOver.visible = false;
+  restart.visible = false;
+
+  obstacles.destroyEach();
+  clouds.destroyEach();
+
+  trex.changeAnimation("running", trex_running);
+
+  score = 0;
+}
